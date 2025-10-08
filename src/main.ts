@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('api/v1');
 
   // Enable global validation pipe
   app.useGlobalPipes(
@@ -21,13 +22,6 @@ async function bootstrap() {
     .setTitle('Money Tracker API')
     .setDescription('Personal finance tracking API with social features')
     .setVersion('1.0.0')
-    .addTag('transactions', 'Income and expense transactions')
-    .addTag('budgets', 'Monthly budgets')
-    .addTag('categories', 'Transaction categories')
-    .addTag('users', 'User management')
-    .addTag('friends', 'Social features and friend requests')
-    .addTag('loans', 'Shared expenses and loans')
-    .addTag('notifications', 'In-app notifications')
     .addBearerAuth()
     .build();
 
