@@ -90,11 +90,15 @@ export class NotificationService {
     this.notificationEmitter.emit(notification);
   }
 
-  async findAll(userId: string) {
-    return this.notificationRepository.findAllByUserId(userId);
+  async findAll(userId: string, limit: number, offset: number) {
+    return this.notificationRepository.findAllByUserId(userId, limit, offset);
   }
 
   async markAsRead(id: string) {
     return this.notificationRepository.markAsRead(id);
+  }
+
+  async markAsUnread(id: string) {
+    return this.notificationRepository.markAsUnread(id);
   }
 }

@@ -35,12 +35,21 @@ export class NotificationController {
   }
 
   @Get()
-  findAll(@Req() req: any) {
-    return this.notificationService.findAll(req.user.userId);
+  findAll(
+    @Req() req: any,
+    @Query('limit') limit = 20,
+    @Query('offset') offset = 0,
+  ) {
+    return this.notificationService.findAll(req.user.userId, limit, offset);
   }
 
   @Patch(':id/read')
   markAsRead(@Param('id') id: string) {
     return this.notificationService.markAsRead(id);
+  }
+
+  @Patch(':id/unread')
+  markAsUnread(@Param('id') id: string) {
+    return this.notificationService.markAsUnread(id);
   }
 }
