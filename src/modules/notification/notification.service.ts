@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { NotificationEmitter } from './events/notification.emitter';
 import { NotificationRepository } from './repositories/notification.repository';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 
@@ -6,10 +7,13 @@ import { CreateNotificationDto } from './dto/create-notification.dto';
 export class NotificationService {
   constructor(
     private readonly notificationRepository: NotificationRepository,
+    private readonly notificationEmitter: NotificationEmitter,
   ) {}
 
   async create(createNotificationDto: CreateNotificationDto) {
-    return this.notificationRepository.create(createNotificationDto);
+    const notification = await this.notificationRepository.create(createNotificationDto);
+    this.notificationEmitter.emit(notification);
+    return notification;
   }
 
   async findAll(userId: string) {

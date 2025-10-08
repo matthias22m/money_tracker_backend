@@ -1,13 +1,38 @@
-import { Controller, Get, Patch, Param, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Patch, Param, UseGuards, Req, Sse, MessageEvent, Query } from '@nestjs/common';
+import { Observable, Subject } from 'rxjs';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { NotificationService } from './notification.service';
+import { NotificationEmitter } from './events/notification.emitter';
 import { ApiTags } from '@nestjs/swagger';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('notifications')
 @Controller('notifications')
 export class NotificationController {
-  constructor(private readonly notificationService: NotificationService) {}
+  private streams: Record<string, Subject<MessageEvent>> = {};
+
+  constructor(
+    private readonly notificationService: NotificationService,
+    private readonly notificationEmitter: NotificationEmitter,
+  ) {
+    this.notificationEmitter.subscribe((notification) => {
+      this.pushNotification(notification.userId, notification);
+    });
+  }
+
+  @Sse('stream')
+  streamNotifications(@Query('userId') userId: string): Observable<MessageEvent> {
+    if (!this.streams[userId]) {
+      this.streams[userId] = new Subject<MessageEvent>();
+    }
+    return this.streams[userId].asObservable();
+  }
+
+  pushNotification(userId: string, data: any) {
+    if (this.streams[userId]) {
+      this.streams[userId].next({ data });
+    }
+  }
 
   @Get()
   findAll(@Req() req: any) {
