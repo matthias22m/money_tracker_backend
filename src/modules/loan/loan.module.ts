@@ -3,16 +3,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoanController } from './loan.controller';
 import { LoanService } from './loan.service';
 import { Loan } from './entities/loan.entity';
-import { Settlement } from './entities/settlement.entity';
 import { LoanRepository } from './repositories/loan.repository';
-import { SettlementRepository } from './repositories/settlement.repository';
 import { FriendsModule } from '../friends/friends.module';
 import { NotificationModule } from '../notification/notification.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Loan, Settlement]), FriendsModule, NotificationModule],
+  imports: [TypeOrmModule.forFeature([Loan]), FriendsModule, NotificationModule],
   controllers: [LoanController],
-  providers: [LoanService, LoanRepository, SettlementRepository],
+  providers: [LoanService, LoanRepository],
   exports: [LoanRepository],
 })
 export class LoanModule {}

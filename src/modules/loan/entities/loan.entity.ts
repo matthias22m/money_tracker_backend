@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany, CreateDateColumn } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { LoanStatus } from '../../../common/enums/loan-status.enum';
-import { Settlement } from './settlement.entity';
+import { Settlement } from 'src/modules/settlement/entities/settlement.entity';
 
 @Entity('loans')
 export class Loan {

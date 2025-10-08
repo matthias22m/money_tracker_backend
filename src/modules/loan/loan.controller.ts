@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Param, UseGuards, Req, Query } from '@nest
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { LoanService } from './loan.service';
 import { CreateLoanDto } from './dto/create-loan.dto';
-import { CreateSettlementDto } from './dto/create-settlement.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @UseGuards(JwtAuthGuard)
@@ -21,16 +20,4 @@ export class LoanController {
     return this.loanService.findLoans(req.user.userId, filters);
   }
 
-  @Post(':id/settlements')
-  addSettlement(
-    @Param('id') loanId: string,
-    @Body() createSettlementDto: CreateSettlementDto,
-  ) {
-    return this.loanService.addSettlement(loanId, createSettlementDto);
-  }
-
-  @Post('settlements/:id/confirm')
-  confirmSettlement(@Req() req: any, @Param('id') settlementId: string) {
-    return this.loanService.confirmSettlement(settlementId, req.user.userId);
-  }
 }
