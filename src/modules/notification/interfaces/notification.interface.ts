@@ -14,6 +14,7 @@ export interface INotification {
 
 export interface INotificationRepository {
   create(data: Partial<INotification>): Promise<INotification>;
-  findAllByUserId(userId: string): Promise<INotification[]>;
+  findAllByUserId(userId: string, limit: number, offset: number): Promise<INotification[]>;
   markAsRead(id: string): Promise<INotification | null>;
+  markAsUnread(id: string): Promise<INotification | null>;
 }

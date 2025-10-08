@@ -17,15 +17,22 @@ export class NotificationRepository
     super(repository);
   }
 
-  async findAllByUserId(userId: string): Promise<Notification[]> {
+  async findAllByUserId(userId: string, limit: number, offset: number): Promise<Notification[]> {
     return this.repository.find({
       where: { userId },
       order: { createdAt: 'DESC' },
+      take: limit,
+      skip: offset,
     });
   }
 
   async markAsRead(id: string): Promise<Notification | null> {
     await this.repository.update(id, { isRead: true });
+    return this.findById(id);
+  }
+
+  async markAsUnread(id: string): Promise<Notification | null> {
+    await this.repository.update(id, { isRead: false });
     return this.findById(id);
   }
 }
