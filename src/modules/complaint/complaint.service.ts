@@ -31,13 +31,7 @@ export class ComplaintService {
       reason,
     });
 
-    this.notificationService.create({
-      userId: loan.lenderId,
-      type: 'complaint_filed' as any,
-      message: `A complaint was filed on Loan #${loan.id}`,
-      loanId: loan.id,
-    });
-    // TODO: Notify admin
+    this.notificationService.notifyComplaintCreated(complaint);
 
     return complaint;
   }
@@ -52,19 +46,7 @@ export class ComplaintService {
       throw new NotFoundException(`Complaint with ID ${id} not found`);
     }
 
-    const loan = await this.loanRepository.findById(complaint.loanId);
-    this.notificationService.create({
-      userId: loan.lenderId,
-      type: 'complaint_resolved' as any,
-      message: `Your complaint on Loan #${loan.id} has been resolved.`,
-      loanId: loan.id,
-    });
-    this.notificationService.create({
-      userId: loan.borrowerId,
-      type: 'complaint_resolved' as any,
-      message: `The complaint on Loan #${loan.id} has been resolved.`,
-      loanId: loan.id,
-    });
+    this.notificationService.notifyComplaintResolved(complaint);
 
     return complaint;
   }

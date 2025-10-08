@@ -26,12 +26,7 @@ export class SettlementService {
       ...createSettlementDto,
     });
 
-    this.notificationService.create({
-      userId: loan.lenderId,
-      type: NotificationType.SETTLEMENT_PENDING,
-      message: `A settlement of ${settlement.amount} was submitted for your loan.`,
-      settlementId: settlement.id,
-    });
+    this.notificationService.notifySettlementSubmitted(settlement);
 
     return settlement;
   }
@@ -56,12 +51,7 @@ export class SettlementService {
       }
     }
 
-    this.notificationService.create({
-      userId: settlement.payerId,
-      type: NotificationType.SETTLEMENT_CONFIRMED,
-      message: `Your settlement of ${settlement.amount} has been ${status}.`,
-      settlementId: settlement.id,
-    });
+    this.notificationService.notifySettlementConfirmed(updatedSettlement);
 
     return updatedSettlement;
   }

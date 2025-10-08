@@ -33,12 +33,7 @@ export class LoanService {
       status: LoanStatus.ACTIVE,
     });
 
-    this.notificationService.create({
-      userId: borrowerId,
-      type: 'loan_created' as any,
-      message: `A loan of ${amount} was logged by a friend in your name.`,
-      loanId: loan.id,
-    });
+    this.notificationService.notifyLoanCreated(loan);
 
     return loan;
   }
