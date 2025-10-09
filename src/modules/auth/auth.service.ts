@@ -47,8 +47,8 @@ export class AuthService {
 
   private async sendVerificationEmail(email: string, token: string) {
     const verificationUrl = `${this.configService.get(
-      'FRONTEND_URL',
-    )}/auth/verify-email?token=${token}`;
+      'MOBILE_DEEP_LINK_SCHEME',
+    )}://verify-email?token=${token}`;
     await this.mailService.sendMail({
       to: email,
       subject: 'Welcome to Money Tracker! Confirm your Email',
@@ -75,8 +75,8 @@ export class AuthService {
 
   private async sendEmailChangeVerification(email: string, token: string) {
     const verificationUrl = `${this.configService.get(
-      'FRONTEND_URL',
-    )}/auth/verify-email-change?token=${token}`;
+      'MOBILE_DEEP_LINK_SCHEME',
+    )}://verify-email-change?token=${token}`;
     await this.mailService.sendMail({
       to: email,
       subject: 'Confirm Your New Email Address',
@@ -106,8 +106,8 @@ export class AuthService {
 
   private async sendPasswordResetEmail(email: string, token: string) {
     const resetUrl = `${this.configService.get(
-      'FRONTEND_URL',
-    )}/auth/reset-password?token=${token}`;
+      'MOBILE_DEEP_LINK_SCHEME',
+    )}://reset-password?token=${token}`;
     await this.mailService.sendMail({
       to: email,
       subject: 'Password Reset Request',
