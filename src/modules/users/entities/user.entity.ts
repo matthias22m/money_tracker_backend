@@ -46,4 +46,19 @@ export class User {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @Column({ name: 'verification_token', nullable: true })
+  verificationToken?: string;
+
+  @Column({ name: 'password_reset_token', nullable: true })
+  passwordResetToken?: string;
+
+  @Column({ name: 'password_reset_expires', nullable: true })
+  passwordResetExpires?: Date;
+
+  @Column({ name: 'new_email', nullable: true })
+  newEmail?: string;
+
+  @Column({ name: 'email_change_token', nullable: true })
+  emailChangeToken?: string;
 }

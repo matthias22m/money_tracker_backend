@@ -24,4 +24,16 @@ export class UsersRepository
   async findByUsername(username: string): Promise<User | null> {
     return this.repository.findOne({ where: { username } });
   }
+
+  async findByVerificationToken(token: string): Promise<User | null> {
+    return this.repository.findOne({ where: { verificationToken: token } });
+  }
+
+  async findByEmailChangeToken(token: string): Promise<User | null> {
+    return this.repository.findOne({ where: { emailChangeToken: token } });
+  }
+
+  async findByPasswordResetToken(token: string): Promise<User | null> {
+    return this.repository.findOne({ where: { passwordResetToken: token } });
+  }
 }

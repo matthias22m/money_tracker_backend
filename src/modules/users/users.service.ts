@@ -48,6 +48,18 @@ export class UsersService {
     return this.usersRepository.findByEmail(email);
   }
 
+  async findByVerificationToken(token: string): Promise<User | null> {
+    return this.usersRepository.findByVerificationToken(token);
+  }
+
+  async findByEmailChangeToken(token: string): Promise<User | null> {
+    return this.usersRepository.findByEmailChangeToken(token);
+  }
+
+  async findByPasswordResetToken(token: string): Promise<User | null> {
+    return this.usersRepository.findByPasswordResetToken(token);
+  }
+
   async findOne(id: string): Promise<User> {
     const user = await this.usersRepository.findById(id);
     if (!user) {
@@ -56,7 +68,7 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: string, updateUserDto: Partial<User>): Promise<User> {
     const user = await this.findOne(id);
 
     // If updating email, check uniqueness
@@ -93,7 +105,7 @@ export class UsersService {
 
   async setCurrentRefreshToken(refreshToken: string, userId: string) {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-    await this.usersRepository.update(userId, {
+    await this.update(userId, {
       currentHashedRefreshToken,
     });
   }
