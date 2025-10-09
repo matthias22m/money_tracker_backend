@@ -11,6 +11,7 @@ import { NotificationModule } from './modules/notification/notification.module';
 import { SettlementModule } from './modules/settlement/settlement.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { MailModule } from './modules/mail/mail.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { MailModule } from './modules/mail/mail.module';
     AnalyticsModule,
     MailModule,
   ],
+  controllers:[AppController]
 })
 export class AppModule {}
 
