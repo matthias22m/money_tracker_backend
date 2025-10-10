@@ -4,6 +4,7 @@ import {
   ConflictException,
   NotFoundException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -16,6 +17,7 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
@@ -41,6 +43,7 @@ export class AuthService {
       if (error instanceof ConflictException) {
         throw error;
       }
+      this.logger.error('Registration failed', error.stack);
       throw new Error('Registration failed');
     }
   }
@@ -49,6 +52,7 @@ export class AuthService {
     const verificationUrl = `${this.configService.get(
       'MOBILE_DEEP_LINK_SCHEME',
     )}://verify-email?token=${token}`;
+    this.logger.log(`Sending verification email to ${email}`);
     await this.mailService.sendMail({
       to: email,
       subject: 'Welcome to Money Tracker! Confirm your Email',
@@ -63,9 +67,9 @@ export class AuthService {
     }
 
     const emailChangeToken = crypto.randomBytes(32).toString('hex');
-    await this.usersService.update(userId, { 
+    await this.usersService.update(userId, {
       newEmail,
-      emailChangeToken 
+      emailChangeToken,
     });
 
     await this.sendEmailChangeVerification(newEmail, emailChangeToken);
@@ -88,7 +92,10 @@ export class AuthService {
     const user = await this.usersService.findByEmail(email);
     if (!user) {
       // Don't reveal that the user doesn't exist
-      return { message: 'If a user with that email exists, a password reset link has been sent.' };
+      return {
+        message:
+          'If a user with that email exists, a password reset link has been sent.',
+      };
     }
 
     const passwordResetToken = crypto.randomBytes(32).toString('hex');
@@ -101,7 +108,10 @@ export class AuthService {
 
     await this.sendPasswordResetEmail(user.email, passwordResetToken);
 
-    return { message: 'If a user with that email exists, a password reset link has been sent.' };
+    return {
+      message:
+        'If a user with that email exists, a password reset link has been sent.',
+    };
   }
 
   private async sendPasswordResetEmail(email: string, token: string) {
@@ -158,7 +168,10 @@ export class AuthService {
 
     user.isEmailVerified = true;
     user.verificationToken = null;
-    await this.usersService.update(user.id, { isEmailVerified: true, verificationToken: null });
+    await this.usersService.update(user.id, {
+      isEmailVerified: true,
+      verificationToken: null,
+    });
 
     return { message: 'Email verified successfully.' };
   }
@@ -168,10 +181,16 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
+    this.logger.debug('Added login attempt for user with email address: ' + loginDto.email);
 
     if (!user.isEmailVerified) {
-      throw new BadRequestException('Please verify your email before logging in.');
-      throw new UnauthorizedException('Invalid credentials');
+      // Resend verification email
+      this.logger.log(`User with email address: ${loginDto.email} has attempted to login, but their email address has not been verified.`);
+
+      await this.sendVerificationEmail(user.email, user.verificationToken);
+      throw new BadRequestException(
+        'Please verify your email before logging in. A new verification link has been sent to your email address.',
+      );
     }
 
     const isPasswordMatching = await bcrypt.compare(
@@ -183,7 +202,10 @@ export class AuthService {
     }
 
     const tokens = await this.getTokens(user.id, user.username, user.email);
-    await this.usersService.setCurrentRefreshToken(tokens.refreshToken, user.id);
+    await this.usersService.setCurrentRefreshToken(
+      tokens.refreshToken,
+      user.id,
+    );
     return tokens;
   }
 
@@ -233,7 +255,10 @@ export class AuthService {
       }
 
       const tokens = await this.getTokens(user.id, user.username, user.email);
-      await this.usersService.setCurrentRefreshToken(tokens.refreshToken, user.id);
+      await this.usersService.setCurrentRefreshToken(
+        tokens.refreshToken,
+        user.id,
+      );
       return tokens;
     } catch (error) {
       throw new UnauthorizedException('Invalid refresh token');
