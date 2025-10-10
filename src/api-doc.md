@@ -279,6 +279,10 @@ This document provides a summary of the API endpoints, their functionalities, an
 - **Description**: List all friends for the authenticated user.
 - **Returns**: `Friend[]`
 
+### `GET /friends/requests`
+- **Description**: List all friend requests for the authenticated user. Pass `type=sent` to get sent requests.
+- **Returns**: `FriendRequest[]`
+
 ### `DELETE /friends/:friendId`
 - **Description**: Remove a friend.
 - **Returns**: `204 No Content`
