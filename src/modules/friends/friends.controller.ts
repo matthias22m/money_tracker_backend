@@ -8,6 +8,7 @@ import {
   HttpStatus,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -45,6 +46,14 @@ export class FriendsController {
   rejectRequest(@Req() req: any, @Param('requestId') requestId: string) {
     const userId = req.user.userId;
     return this.friendsService.rejectRequest(userId, requestId);
+  }
+
+  @Get('requests')
+  @ApiOperation({ summary: 'List all friend requests for the authenticated user' })
+  @ApiResponse({ status: 200, description: 'List of friend requests' })
+  listFriendRequests(@Req() req: any, @Query('type') type: 'sent' | 'received' = 'received') {
+    const userId = req.user.userId;
+    return this.friendsService.listFriendRequests(userId, type);
   }
 
   @Get()

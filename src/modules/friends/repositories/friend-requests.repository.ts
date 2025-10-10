@@ -30,7 +30,7 @@ export class FriendRequestsRepository
     });
   }
 
-  async findByReceiverId(receiverId: string): Promise<FriendRequest[]> {
+  async findReceivedRequests(receiverId: string): Promise<FriendRequest[]> {
     return this.repository.find({
       where: { receiverId, status: FriendStatus.PENDING },
       relations: ['sender'],
@@ -38,7 +38,7 @@ export class FriendRequestsRepository
     });
   }
 
-  async findBySenderId(senderId: string): Promise<FriendRequest[]> {
+  async findSentRequests(senderId: string): Promise<FriendRequest[]> {
     return this.repository.find({
       where: { senderId, status: FriendStatus.PENDING },
       relations: ['receiver'],

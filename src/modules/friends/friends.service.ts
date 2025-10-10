@@ -85,6 +85,13 @@ export class FriendsService {
     return { message: 'Friend request rejected' };
   }
 
+  async listFriendRequests(userId: string, type: 'sent' | 'received') {
+    if (type === 'sent') {
+      return this.friendRequestsRepository.findSentRequests(userId);
+    }
+    return this.friendRequestsRepository.findReceivedRequests(userId);
+  }
+
   async listFriends(userId: string) {
     return this.friendsRepository.findByUserId(userId);
   }

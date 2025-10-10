@@ -13,8 +13,8 @@ export interface IFriendRequestRepository {
   findAll(): Promise<IFriendRequest[]>;
   findById(id: string): Promise<IFriendRequest | null>;
   findPendingRequest(senderId: string, receiverId: string): Promise<IFriendRequest | null>;
-  findByReceiverId(receiverId: string): Promise<IFriendRequest[]>;
-  findBySenderId(senderId: string): Promise<IFriendRequest[]>;
+  findReceivedRequests(receiverId: string): Promise<IFriendRequest[]>;
+  findSentRequests(senderId: string): Promise<IFriendRequest[]>;
   create(data: Partial<IFriendRequest>): Promise<IFriendRequest>;
   update(id: string, data: Partial<IFriendRequest>): Promise<IFriendRequest | null>;
   delete(id: string): Promise<boolean>;
