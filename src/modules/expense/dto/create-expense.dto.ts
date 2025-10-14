@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsNumber, IsEnum, IsString, IsDateString, IsUUID, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsEnum, IsString, IsDateString, IsUUID, IsOptional, IsDate } from 'class-validator';
 import { ExpenseType } from '../../../common/enums/expense-type.enum';
+import { Type } from 'class-transformer';
 
 export class CreateExpenseDto {
   @IsNumber()
@@ -14,7 +15,8 @@ export class CreateExpenseDto {
   @IsString()
   note?: string;
 
-  @IsDateString()
+  @IsDate()
+  @Type(() => Date)
   @IsNotEmpty()
   date: Date;
 
