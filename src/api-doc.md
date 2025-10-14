@@ -231,6 +231,26 @@ This document provides a summary of the API endpoints, their functionalities, an
 - **Description**: Remove a category.
 - **Returns**: `204 No Content`
 
+### `POST /expense/budget`
+- **Description**: Create a new budget.
+- **Returns**: `Budget`
+
+### `GET /expense/budget`
+- **Description**: Find all budgets for the current user.
+- **Returns**: `Budget[]`
+
+### `GET /expense/budget/:id`
+- **Description**: Get a budget by ID.
+- **Returns**: `Budget`
+
+### `PATCH /expense/budget/:id`
+- **Description**: Update a budget.
+- **Returns**: `Budget`
+
+### `DELETE /expense/budget/:id`
+- **Description**: Remove a budget.
+- **Returns**: `204 No Content`
+
 ### `POST /expense`
 - **Description**: Create a new expense.
 - **Returns**: `Expense`
