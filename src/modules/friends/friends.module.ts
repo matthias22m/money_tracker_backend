@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FriendsController } from './friends.controller';
 import { FriendsService } from './friends.service';
@@ -9,9 +9,12 @@ import { FriendRequestsRepository } from './repositories/friend-requests.reposit
 import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Friend, FriendRequest]), UsersModule],
+  imports: [
+    TypeOrmModule.forFeature([Friend, FriendRequest]),
+    forwardRef(() => UsersModule)
+  ],
   controllers: [FriendsController],
   providers: [FriendsService, FriendsRepository, FriendRequestsRepository],
-  exports: [FriendsRepository],
+  exports: [FriendsRepository, FriendRequestsRepository],
 })
 export class FriendsModule {}
