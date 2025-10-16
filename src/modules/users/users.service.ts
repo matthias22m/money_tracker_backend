@@ -6,12 +6,73 @@ import {
 import * as bcrypt from 'bcrypt';
 import { UsersRepository } from './repositories/users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { FriendsRepository } from '../friends/repositories/friends.repository';
+import { FriendRequestsRepository } from '../friends/repositories/friend-requests.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly friendsRepository: FriendsRepository,
+    private readonly friendRequestsRepository: FriendRequestsRepository,
+  ) {}
+
+  async searchUsers(
+    query: string,
+    currentUserId: string,
+    excludeFriends: boolean,
+  ): Promise<any[]> {
+    if (!query) {
+      return [];
+    }
+
+    let friendIds: string[] = [];
+    if (excludeFriends) {
+      const friends = await this.friendsRepository.findByUserId(currentUserId);
+      friendIds = friends.map((friend) => friend.friendId);
+    }
+
+    const users = await this.usersRepository.search(
+      query,
+      currentUserId,
+      excludeFriends,
+      friendIds,
+    );
+
+    return this.addFriendRequestStatus(users, currentUserId);
+  }
+
+  private async addFriendRequestStatus(
+    users: User[],
+    currentUserId: string,
+  ): Promise<any[]> {
+    const friends = await this.friendsRepository.findByUserId(currentUserId);
+    const friendIds = friends.map((f) => f.friendId);
+
+    const sentRequests = await this.friendRequestsRepository.findSentRequests(
+      currentUserId,
+    );
+    const receivedRequests = await this.friendRequestsRepository.findReceivedRequests(
+      currentUserId,
+    );
+
+    const sentRequestReceiverIds = sentRequests.map((req) => req.receiverId);
+    const receivedRequestSenderIds = receivedRequests.map((req) => req.senderId);
+
+    return users.map((user) => {
+      const isFriend = friendIds.includes(user.id);
+      const hasPendingRequest =
+        sentRequestReceiverIds.includes(user.id) ||
+        receivedRequestSenderIds.includes(user.id);
+
+      return {
+        ...user,
+        isFriend,
+        hasPendingRequest,
+      };
+    });
+  }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     // Check if email already exists

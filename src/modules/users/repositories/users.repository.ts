@@ -17,6 +17,28 @@ export class UsersRepository
     super(repository);
   }
 
+  async search(
+    query: string,
+    currentUserId: string,
+    excludeFriends: boolean,
+    friendIds: string[],
+  ): Promise<User[]> {
+    const queryBuilder = this.repository.createQueryBuilder('user');
+
+    queryBuilder.where(
+      '(user.username ILIKE :query OR user.name ILIKE :query OR user.email ILIKE :query)',
+      { query: `%${query}%` },
+    );
+
+    queryBuilder.andWhere('user.id != :currentUserId', { currentUserId });
+
+    if (excludeFriends && friendIds.length > 0) {
+      queryBuilder.andWhere('user.id NOT IN (:...friendIds)', { friendIds });
+    }
+
+    return queryBuilder.getMany();
+  }
+
   async findByEmail(email: string): Promise<User | null> {
     return this.repository.findOne({ where: { email } });
   }
