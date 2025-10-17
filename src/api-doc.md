@@ -4,6 +4,27 @@ This document provides a summary of the API endpoints, their functionalities, an
 
 ## Users
 
+### `GET /users/search`
+- **Description**: Search for users by name, username, or email.
+- **Query Parameters**:
+  - `query` (required): Search term
+  - `excludeFriends` (optional, default: false): Exclude existing friends from results
+- **Authentication**: Required (JWT)
+- **Returns**: `UserSearchResponse[]`
+  ```json
+  [
+    {
+      "id": "string",
+      "name": "string",
+      "username": "string",
+      "email": "string",
+      "profile": "string",
+      "isFriend": false,
+      "hasPendingRequest": false
+    }
+  ]
+  ```
+
 ### `POST /users`
 - **Description**: Create a new user.
 - **Returns**: `UserResponseDto`
@@ -313,6 +334,18 @@ This document provides a summary of the API endpoints, their functionalities, an
 - **Description**: Create a new loan.
 - **Returns**: `Loan`
 
+### `POST /loans/multiple`
+- **Description**: Create multiple loans with the same amount for different borrowers.
+- **Request Body**:
+  ```json
+  {
+    "borrowerIds": ["uuid1", "uuid2", "uuid3"],
+    "amount": 50.00,
+    "description": "Shared expense"
+  }
+  ```
+- **Returns**: `Loan[]`
+
 ### `GET /loans`
 - **Description**: Find loans for the current user.
 - **Returns**: `Loan[]`
@@ -352,3 +385,71 @@ This document provides a summary of the API endpoints, their functionalities, an
 ### `GET /settlements`
 - **Description**: Find settlements for a loan.
 - **Returns**: `Settlement[]`
+
+## Groups
+
+### `POST /groups`
+- **Description**: Create a new private group.
+- **Authentication**: Required (JWT)
+- **Request Body**:
+  ```json
+  {
+    "name": "Weekend Squad",
+    "description": "Friends I hang out with on weekends",
+    "members": ["uuid1", "uuid2"]
+  }
+  ```
+- **Returns**: `GroupResponseDto`
+
+### `GET /groups`
+- **Description**: List all groups owned by the current user.
+- **Authentication**: Required (JWT)
+- **Returns**: `GroupResponseDto[]`
+
+### `GET /groups/:id`
+- **Description**: Get details of a specific group (owner only).
+- **Authentication**: Required (JWT)
+- **Returns**: `GroupResponseDto`
+
+### `POST /groups/:id/members`
+- **Description**: Add members to a group.
+- **Authentication**: Required (JWT)
+- **Request Body**:
+  ```json
+  {
+    "members": ["uuid3", "uuid4"]
+  }
+  ```
+- **Returns**: `GroupResponseDto`
+
+### `DELETE /groups/:id/members/:memberId`
+- **Description**: Remove a member from a group.
+- **Authentication**: Required (JWT)
+- **Returns**: `GroupResponseDto`
+
+### `POST /groups/:id/expense`
+- **Description**: Add an expense to a group and split equally among all participants. Creates individual loan records for each member.
+- **Authentication**: Required (JWT)
+- **Request Body**:
+  ```json
+  {
+    "amount": 100.50,
+    "description": "Dinner at restaurant",
+    "date": "2025-10-16T23:00:00Z"
+  }
+  ```
+- **Returns**:
+  ```json
+  {
+    "groupExpenseId": "string",
+    "loanIds": ["string"],
+    "totalAmount": 100.50,
+    "participantsCount": 4,
+    "message": "Expense of 100.5 split among 4 participants. 3 loans created."
+  }
+  ```
+
+### `DELETE /groups/:id`
+- **Description**: Delete a group and all its members.
+- **Authentication**: Required (JWT)
+- **Returns**: `204 No Content`
