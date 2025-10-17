@@ -11,26 +11,26 @@ export class BudgetController {
 
   @Post()
   create(@Body() createBudgetDto: CreateBudgetDto, @Req() req) {
-    return this.budgetService.create(createBudgetDto, req.user.id);
+    return this.budgetService.create(createBudgetDto, req.user.userId);
   }
 
   @Get()
   findAll(@Req() req) {
-    return this.budgetService.findAll(req.user.id);
+    return this.budgetService.findAll(req.user.userId);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string, @Req() req) {
-    return this.budgetService.findOne(id, req.user.id);
+    return this.budgetService.findOne(id, req.user.userId);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBudgetDto: UpdateBudgetDto, @Req() req) {
-    return this.budgetService.update(id, updateBudgetDto, req.user.id);
+    return this.budgetService.update(id, updateBudgetDto, req.user.userId);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string, @Req() req) {
-    return this.budgetService.remove(id, req.user.id);
+    return this.budgetService.remove(id, req.user.userId);
   }
 }

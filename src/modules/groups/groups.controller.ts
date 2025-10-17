@@ -48,7 +48,7 @@ export class GroupsController {
     @Request() req,
     @Body() createGroupDto: CreateGroupDto,
   ): Promise<GroupResponseDto> {
-    const group = await this.groupsService.createGroup(req.user.id, createGroupDto);
+    const group = await this.groupsService.createGroup(req.user.userId, createGroupDto);
     return this.mapToGroupResponse(group);
   }
 
@@ -60,7 +60,7 @@ export class GroupsController {
     type: [GroupResponseDto],
   })
   async findAllGroups(@Request() req): Promise<GroupResponseDto[]> {
-    const groups = await this.groupsService.findAllByOwner(req.user.id);
+    const groups = await this.groupsService.findAllByOwner(req.user.userId);
     return groups.map((group) => this.mapToGroupResponse(group));
   }
 
@@ -75,7 +75,7 @@ export class GroupsController {
   @ApiResponse({ status: 403, description: 'Forbidden - not the group owner' })
   @ApiResponse({ status: 404, description: 'Group not found' })
   async findGroupById(@Request() req, @Param('id') id: string): Promise<GroupResponseDto> {
-    const group = await this.groupsService.findById(id, req.user.id);
+    const group = await this.groupsService.findById(id, req.user.userId);
     return this.mapToGroupResponse(group);
   }
 
@@ -95,7 +95,7 @@ export class GroupsController {
     @Param('id') id: string,
     @Body() addGroupMembersDto: AddGroupMembersDto,
   ): Promise<GroupResponseDto> {
-    const group = await this.groupsService.addMembers(id, req.user.id, addGroupMembersDto);
+    const group = await this.groupsService.addMembers(id, req.user.userId, addGroupMembersDto);
     return this.mapToGroupResponse(group);
   }
 
@@ -116,7 +116,7 @@ export class GroupsController {
     @Param('id') id: string,
     @Param('memberId') memberId: string,
   ): Promise<GroupResponseDto> {
-    const group = await this.groupsService.removeMember(id, memberId, req.user.id);
+    const group = await this.groupsService.removeMember(id, memberId, req.user.userId);
     return this.mapToGroupResponse(group);
   }
 
@@ -146,7 +146,7 @@ export class GroupsController {
   ): Promise<GroupExpenseResponseDto> {
     const result = await this.groupsService.createGroupExpense(
       id,
-      req.user.id,
+      req.user.userId,
       createGroupExpenseDto,
     );
 
@@ -167,7 +167,7 @@ export class GroupsController {
   @ApiResponse({ status: 403, description: 'Forbidden - not the group owner' })
   @ApiResponse({ status: 404, description: 'Group not found' })
   async deleteGroup(@Request() req, @Param('id') id: string): Promise<void> {
-    await this.groupsService.deleteGroup(id, req.user.id);
+    await this.groupsService.deleteGroup(id, req.user.userId);
   }
 
   // Helper method to map entity to response DTO
