@@ -146,3 +146,30 @@ This file contains the database schemas for all the entities in the application.
 -   `pending`
 -   `confirmed`
 -   `rejected`
+
+## Groups
+
+-   `id`: uuid (Primary Key)
+-   `owner_id`: uuid (Foreign Key to `users`)
+-   `name`: varchar(255)
+-   `description`: text (nullable)
+-   `created_at`: timestamp
+-   `updated_at`: timestamp
+-   **Unique Index**: (owner_id, name)
+
+## Group Members
+
+-   `id`: uuid (Primary Key)
+-   `group_id`: uuid (Foreign Key to `groups`, CASCADE DELETE)
+-   `member_id`: uuid (Foreign Key to `users`)
+-   `created_at`: timestamp
+-   **Unique Index**: (group_id, member_id)
+
+## Group Expenses
+
+-   `id`: uuid (Primary Key)
+-   `group_id`: uuid (Foreign Key to `groups`)
+-   `owner_id`: uuid (Foreign Key to `users`)
+-   `description`: varchar(255) (nullable)
+-   `amount`: decimal(10, 2)
+-   `created_at`: timestamp
