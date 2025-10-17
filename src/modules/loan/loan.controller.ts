@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, UseGuards, Req, Query } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { LoanService } from './loan.service';
-import { CreateLoanDto } from './dto/create-loan.dto';
+import { CreateLoanDto, CreateMultipleLoanDto } from './dto/create-loan.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @UseGuards(JwtAuthGuard)
@@ -13,6 +13,11 @@ export class LoanController {
   @Post()
   createLoan(@Req() req: any, @Body() createLoanDto: CreateLoanDto) {
     return this.loanService.createLoan(req.user.userId, createLoanDto);
+  }
+
+  @Post('multiple')
+  createMultipleLoans(@Req() req: any, @Body() createMultipleLoanDto: CreateMultipleLoanDto) {
+    return this.loanService.createMultipleLoans(req.user.userId, createMultipleLoanDto);
   }
 
   @Get()

@@ -13,3 +13,18 @@ export class CreateLoanDto {
   @IsString()
   description?: string;
 }
+
+
+export class CreateMultipleLoanDto {
+  @IsUUID('all')
+  @IsNotEmpty()
+  borrowerIds: string[];
+
+  @IsNumber()
+  @IsNotEmpty()
+  amount: number;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+}
