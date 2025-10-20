@@ -16,8 +16,10 @@ export class LoanRepository extends BaseRepository<Loan> implements ILoanReposit
 
   async findAllByUserId(userId: string, filters?: any): Promise<Loan[]> {
     const query = this.repository.createQueryBuilder('loan')
-      .leftJoinAndSelect('loan.lender', 'lender')
-      .leftJoinAndSelect('loan.borrower', 'borrower');
+      .leftJoin('loan.lender', 'lender')
+      .leftJoin('loan.borrower', 'borrower')
+      .addSelect(['lender.id', 'lender.name', 'lender.username', 'lender.email'])
+      .addSelect(['borrower.id', 'borrower.name', 'borrower.username', 'borrower.email']);
 
     query.where('loan.lenderId = :userId OR loan.borrowerId = :userId', { userId });
 
