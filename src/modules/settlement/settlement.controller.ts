@@ -13,10 +13,7 @@ export class SettlementController {
 
   @Post()
   createSettlement(@Body() createSettlementDto: CreateSettlementDto) {
-    // Note: Loan ID should be part of the DTO or path
-    // This is a placeholder until the DTO is updated
-    const loanId = '...'; // Replace with actual loanId from DTO
-    return this.settlementService.createSettlement(loanId, createSettlementDto);
+    return this.settlementService.createSettlement(createSettlementDto);
   }
 
   @Patch(':id/confirm')

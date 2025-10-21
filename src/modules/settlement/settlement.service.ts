@@ -15,20 +15,20 @@ export class SettlementService {
     private readonly notificationService: NotificationService,
   ) {}
 
-  async createSettlement(loanId: string, createSettlementDto: CreateSettlementDto) {
-    const loan = await this.loanRepository.findById(loanId);
+  async createSettlement(createSettlementDto: CreateSettlementDto) {
+    const loan = await this.loanRepository.findById(createSettlementDto.loanId);
     if (!loan) {
-      throw new NotFoundException(`Loan with ID ${loanId} not found`);
+      throw new NotFoundException(`Loan with ID ${createSettlementDto.loanId} not found`);
     }
 
     const settlement = await this.settlementRepository.create({
-      loanId,
       ...createSettlementDto,
     });
 
     this.notificationService.notifySettlementSubmitted(settlement);
 
-    return settlement;
+    // Fetch settlement with relations to return complete data
+    return this.settlementRepository.findByIdWithRelations(settlement.id);
   }
 
   async confirmOrRejectSettlement(settlementId: string, userId: string, status: SettlementStatus.CONFIRMED | SettlementStatus.REJECTED) {
@@ -42,7 +42,7 @@ export class SettlementService {
       throw new ForbiddenException('Only the lender can confirm or reject a settlement.');
     }
 
-    const updatedSettlement = await this.settlementRepository.update(settlementId, { status });
+    await this.settlementRepository.update(settlementId, { status });
 
     if (status === SettlementStatus.CONFIRMED) {
       const totalSettled = await this.settlementRepository.getTotalSettledAmount(loan.id);
@@ -50,6 +50,9 @@ export class SettlementService {
         await this.loanRepository.update(loan.id, { status: LoanStatus.SETTLED });
       }
     }
+
+    // Fetch settlement with relations to return complete data
+    const updatedSettlement = await this.settlementRepository.findByIdWithRelations(settlementId);
 
     this.notificationService.notifySettlementConfirmed(updatedSettlement);
 

@@ -18,8 +18,18 @@ export class SettlementRepository
     super(repository);
   }
 
+  async findByIdWithRelations(id: string): Promise<Settlement | null> {
+    return this.repository.findOne({
+      where: { id },
+      relations: ['payer', 'receiver'],
+    });
+  }
+
   async findAllByLoanId(loanId: string): Promise<Settlement[]> {
-    return this.repository.find({ where: { loanId } });
+    return this.repository.find({
+      where: { loanId },
+      relations: ['payer', 'receiver'],
+    });
   }
 
   async getTotalSettledAmount(loanId: string): Promise<number> {

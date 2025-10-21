@@ -3,6 +3,10 @@ import { IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
 export class CreateSettlementDto {
   @IsUUID()
   @IsNotEmpty()
+  loanId: string;
+
+  @IsUUID()
+  @IsNotEmpty()
   payerId: string;
 
   @IsUUID()
