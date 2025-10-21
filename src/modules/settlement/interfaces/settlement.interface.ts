@@ -14,6 +14,6 @@ export interface ISettlementRepository {
   create(data: Partial<ISettlement>): Promise<ISettlement>;
   findById(id: string): Promise<ISettlement | null>;
   update(id: string, data: Partial<ISettlement>): Promise<ISettlement | null>;
-  findAllByLoanId(loanId: string): Promise<ISettlement[]>;
+  findByLoanId(loanId: string): Promise<ISettlement | null>;
   getTotalSettledAmount(loanId: string): Promise<number>;
 }

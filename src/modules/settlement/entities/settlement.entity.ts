@@ -1,9 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, Unique } from 'typeorm';
 import { Loan } from '../../loan/entities/loan.entity';
 import { User } from '../../users/entities/user.entity';
 import { SettlementStatus } from '../../../common/enums/settlement-status.enum';
 
 @Entity('settlements')
+@Unique(['loanId'])
 export class Settlement {
   @PrimaryGeneratedColumn('uuid')
   id: string;

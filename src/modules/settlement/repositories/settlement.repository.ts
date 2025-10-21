@@ -25,8 +25,8 @@ export class SettlementRepository
     });
   }
 
-  async findAllByLoanId(loanId: string): Promise<Settlement[]> {
-    return this.repository.find({
+  async findByLoanId(loanId: string): Promise<Settlement | null> {
+    return this.repository.findOne({
       where: { loanId },
       relations: ['payer', 'receiver'],
     });

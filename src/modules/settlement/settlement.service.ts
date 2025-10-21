@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, ConflictException } from '@nestjs/common';
 import { LoanRepository } from '../loan/repositories/loan.repository';
 import { NotificationService } from '../notification/notification.service';
 import { CreateSettlementDto } from '../loan/dto/create-settlement.dto';
@@ -19,6 +19,12 @@ export class SettlementService {
     const loan = await this.loanRepository.findById(createSettlementDto.loanId);
     if (!loan) {
       throw new NotFoundException(`Loan with ID ${createSettlementDto.loanId} not found`);
+    }
+
+    // Check if a settlement already exists for this loan
+    const existingSettlement = await this.settlementRepository.findByLoanId(createSettlementDto.loanId);
+    if (existingSettlement) {
+      throw new ConflictException(`A settlement already exists for loan ID ${createSettlementDto.loanId}`);
     }
 
     const settlement = await this.settlementRepository.create({
@@ -59,7 +65,7 @@ export class SettlementService {
     return updatedSettlement;
   }
 
-  async findSettlementsForLoan(loanId: string) {
-    return this.settlementRepository.findAllByLoanId(loanId);
+  async findSettlementForLoan(loanId: string) {
+    return this.settlementRepository.findByLoanId(loanId);
   }
 }

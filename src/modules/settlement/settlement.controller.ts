@@ -27,7 +27,7 @@ export class SettlementController {
   }
 
   @Get()
-  findSettlementsForLoan(@Query('loanId') loanId: string) {
-    return this.settlementService.findSettlementsForLoan(loanId);
+  findSettlementForLoan(@Query('loanId') loanId: string) {
+    return this.settlementService.findSettlementForLoan(loanId);
   }
 }
